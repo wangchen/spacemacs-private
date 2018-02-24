@@ -133,6 +133,7 @@
   )
 
 (defun dotspacemacs/user-config ()
+  (setq powerline-default-separator nil)
   (spacemacs//set-monospaced-font "Hasklig"   "STHeiti" 14 16)
   (global-hungry-delete-mode)
   (global-set-key (kbd "s-1") 'winum-select-window-1)
