@@ -7,6 +7,8 @@
    dotspacemacs-configuration-layer-path '()
    dotspacemacs-configuration-layers
    '(
+     shell-scripts
+     themes-megapack
      ;; Tools
      helm
      (osx :varijs2-mode-toggle-warnings-and-errorsables osx-command-as 'super)
@@ -15,6 +17,7 @@
      (better-defaults :variables
                       better-defaults-move-to-beginning-of-code-first t
                       better-defaults-move-to-end-of-code-first nil)
+     command-log
      ;; Documentation
      (org :variables org-enable-github-support t)
      (markdown :variables markdown-live-preview-engine 'vmd)
@@ -70,11 +73,12 @@
                                 (projects . 7))
    dotspacemacs-startup-buffer-responsive t
    dotspacemacs-scratch-mode 'text-mode
-   dotspacemacs-themes '(spacemacs-light
-                         spacemacs-dark)
+   dotspacemacs-themes '(rebecca
+                         spacemacs-dark
+                         spacemacs-light)
    dotspacemacs-colorize-cursor-according-to-state t
-   dotspacemacs-default-font '("Hasklig"
-                               :size 13
+   dotspacemacs-default-font '("Space Mono"
+                               :size 14
                                :weight normal
                                :width normal
                                :powerline-scale 1.1)
@@ -134,7 +138,7 @@
 
 (defun dotspacemacs/user-config ()
   (setq powerline-default-separator nil)
-  (spacemacs//set-monospaced-font "Hasklig"   "STHeiti" 14 16)
+  (spacemacs//set-monospaced-font "Space Mono"   "STHeiti" 14 16)
   (global-hungry-delete-mode)
   (global-set-key (kbd "s-1") 'winum-select-window-1)
   (global-set-key (kbd "s-2") 'winum-select-window-2)
@@ -152,8 +156,7 @@
   ;; Editing
   (setq org-startup-truncated nil)
   ;; Javascript
-  (setq-default js2-basic-offset 2
-                js-indent-level 2)
+  (setq-default js2-basic-offset 2 js-indent-level 2)
   ;; Org-mode
   (setq org-todo-keywords
         '((sequence "TODO" "NEXT(n)" "WAITTING(w)" "SOMEDAY(s)"
@@ -167,7 +170,6 @@
                    "* %?\nEntered on %U\n  %i\n  %a")
                   )
                 org-agenda-files '("~/Dropbox/Org/gtd.org"))
-
   )
 (defun my/set-frame-size-1x()
   (interactive)
