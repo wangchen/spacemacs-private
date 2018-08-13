@@ -30,7 +30,7 @@ This function should only modify configuration layer settings."
 
    ;; List of configuration layers to load.
    dotspacemacs-configuration-layers
-   '(
+   '(ruby
      ;; Fun
      emoji
      themes-megapack
@@ -66,13 +66,14 @@ This function should only modify configuration layer settings."
                       :disabled-for org markdown)
      syntax-checking
      ;; Languages
+     lsp
      emacs-lisp
      shell-scripts
      sql
      yaml
      nginx
      html
-     javascript
+     (javascript :variables javascript-backend 'lsp)
      python
      )
    dotspacemacs-additional-packages '(vue-mode)
@@ -480,12 +481,12 @@ It should only modify the values of Spacemacs settings."
                     "DONE(d@/!)" "ABORT(A@/!)")))
   (setq-default org-capture-templates  
                 '(
-                  ("t" "Todo" entry (file+headline "~/Dropbox/Org/gtd.org" "Inbox")
+                  ("t" "Todo" entry (file+headline "~/Documents/Orgs/gtd.org" "Inbox")
                    "* TODO %?\n  %i\n  %a")
-                  ("j" "Journal" entry (file+datetree "~/Dropbox/Org/journal.org")
+                  ("n" "Notebook" entry (file+datetree "~/Documents/Orgs/notebook.org")
                    "* %?\nEntered on %U\n  %i\n  %a")
                   )
-                org-agenda-files '("~/Dropbox/Org/gtd.org"))
+                org-agenda-files '("~/Documents/Orgs/gtd.org"))
   )
 (defun my/set-frame-size-1x()
   (interactive)
