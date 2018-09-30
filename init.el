@@ -34,7 +34,7 @@ This function should only modify configuration layer settings."
      ;; Fun
      emoji
      themes-megapack
-     (colors :variables colors-enable-nyan-cat-progress-bar t)
+     colors
      ;; Tools
      helm
      (osx :variables
@@ -66,15 +66,20 @@ This function should only modify configuration layer settings."
                       :disabled-for org markdown)
      syntax-checking
      ;; Languages
-     lsp
+     (lsp :variables
+          lsp-ui-flycheck-enable nil)
      emacs-lisp
      shell-scripts
      sql
      yaml
      nginx
      html
-     (javascript :variables javascript-backend 'lsp)
-     python
+     (javascript :variables
+                 javascript-backend 'lsp
+                 javascript-fmt-tool 'prettier
+                 node-add-modules-path t)
+     (python :variables
+             python-backend 'lsp)
      )
    dotspacemacs-additional-packages '(vue-mode)
    dotspacemacs-frozen-packages '()
@@ -201,9 +206,11 @@ It should only modify the values of Spacemacs settings."
    ;; List of themes, the first of the list is loaded when spacemacs starts.
    ;; Press `SPC T n' to cycle to the next theme in the list (works great
    ;; with 2 themes variants, one dark and one light)
-   dotspacemacs-themes '(rebecca
+   dotspacemacs-themes '(doom-tomorrow-day
+                         spacemacs-light
+                         rebecca
                          spacemacs-dark
-                         spacemacs-light)
+                         )
 
    ;; Set the theme for the Spaceline. Supported themes are `spacemacs',
    ;; `all-the-icons', `custom', `vim-powerline' and `vanilla'. The first three
@@ -212,7 +219,7 @@ It should only modify the values of Spacemacs settings."
    ;; to create your own spaceline theme. Value can be a symbol or list with\
    ;; additional properties.
    ;; (default '(spacemacs :separator wave :separator-scale 1.5))
-   dotspacemacs-mode-line-theme '(spacemacs :separator wave :separator-scale 1.5)
+   dotspacemacs-mode-line-theme '(spacemacs :separator nil :separator-scale 1.0)
 
    ;; If non-nil the cursor color matches the state color in GUI Emacs.
    ;; (default t)
@@ -332,7 +339,7 @@ It should only modify the values of Spacemacs settings."
    ;; A value from the range (0..100), in increasing opacity, which describes
    ;; the transparency level of a frame when it's inactive or deselected.
    ;; Transparency can be toggled through `toggle-transparency'. (default 90)
-   dotspacemacs-inactive-transparency 50
+   dotspacemacs-inactive-transparency 90
 
    ;; If non-nil show the titles of transient states. (default t)
    dotspacemacs-show-transient-state-title t
@@ -450,11 +457,16 @@ It should only modify the values of Spacemacs settings."
   (setq python-fill-column 80)
   (setq-default git-magit-status-fullscreen t)
   (add-to-list 'exec-path "/Users/wangchen/.nvm/versions/node/v9.4.0/bin" t)
+  (add-to-list 'default-frame-alist '(ns-transparent-titlebar . t))
+  ;; (add-to-list 'default-frame-alist '(ns-appearance . dark)) ;; assuming you are using a dark theme
+  (add-to-list 'default-frame-alist '(ns-appearance . light)) ;; assuming you are using a dark theme
+  (setq ns-use-proxy-icon nil)
+  (setq frame-title-format nil)
   )
 
 (defun dotspacemacs/user-config ()
   (spacemacs/toggle-transparency)
-  (setq powerline-default-separator nil)
+  ;; (setq powerline-default-separator nil)
   (spacemacs//set-monospaced-font "Mononoki"   "STHeiti" 14 16)
   (global-hungry-delete-mode)
   (global-set-key (kbd "s-1") 'winum-select-window-1)
@@ -473,7 +485,15 @@ It should only modify the values of Spacemacs settings."
   ;; Editing
   (setq org-startup-truncated nil)
   ;; Javascript
-  (setq-default js2-basic-offset 2 js-indent-level 2)
+  (setq-default js2-basic-offset 2
+                js-indent-level 2
+                js2-mode-show-parse-errors nil
+                js2-mode-show-strict-warnings nil)
+  (spacemacs|use-package-add-hook js2-mode
+    :post-config
+    (spacemacs/set-leader-keys-for-major-mode 'js2-mode
+      "=" 'my/prettier-eslint)
+    )
   ;; Org-mode
   (setq org-todo-keywords
         '((sequence "TODO" "NEXT(n)" "WAITTING(w)" "SOMEDAY(s)"
@@ -497,32 +517,15 @@ It should only modify the values of Spacemacs settings."
   (interactive)
   (set-frame-width (selected-frame) 200))
 
-(defun my/use-js-executables-from-node-modules ()
-  "Set executables of JS checkers from local node modules."
-  (-when-let* ((file-name (buffer-file-name))
-               (root (locate-dominating-file file-name "node_modules"))
-               (module-directory (expand-file-name "node_modules" root)))
-    (pcase-dolist (`(,checker . ,module) '((javascript-jshint . "jshint")
-                                           (javascript-eslint . "eslint")
-                                           (javascript-jscs   . "jscs")))
-      (let ((package-directory (expand-file-name module module-directory))
-            (executable-var (flycheck-checker-executable-variable checker)))
-        (when (file-directory-p package-directory)
-          (set (make-local-variable executable-var)
-               (expand-file-name (concat "bin/" module ".js")
-                                 package-directory)))))))
-(custom-set-variables
- ;; custom-set-variables was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- '(evil-want-Y-yank-to-eol nil)
- '(package-selected-packages
-   (quote
-    (emoji-cheat-sheet-plus company-emoji highlight skewer-mode simple-httpd markdown-mode pythonic command-log-mode insert-shebang fish-mode company-shell edit-indirect ssass-mode vue-html-mode multiple-cursors anaconda-mode avy smartparens evil flycheck yasnippet company projectile helm helm-core alert org-plus-contrib magit magit-popup git-commit ghub with-editor async hydra js2-mode s bind-key dash darktooth-theme zenburn-theme zen-and-art-theme white-sand-theme underwater-theme ujelly-theme twilight-theme twilight-bright-theme twilight-anti-bright-theme toxi-theme tao-theme tangotango-theme tango-plus-theme tango-2-theme sunny-day-theme sublime-themes subatomic256-theme subatomic-theme spacegray-theme soothe-theme solarized-theme soft-stone-theme soft-morning-theme soft-charcoal-theme smyx-theme seti-theme reverse-theme rebecca-theme railscasts-theme purple-haze-theme professional-theme planet-theme phoenix-dark-pink-theme phoenix-dark-mono-theme organic-green-theme omtose-phellack-theme oldlace-theme occidental-theme obsidian-theme noctilux-theme naquadah-theme mustang-theme monokai-theme monochrome-theme molokai-theme moe-theme minimal-theme material-theme majapahit-theme madhat2r-theme lush-theme light-soap-theme jbeans-theme jazz-theme ir-black-theme inkpot-theme heroku-theme hemisu-theme hc-zenburn-theme gruvbox-theme gruber-darker-theme grandshell-theme gotham-theme gandalf-theme flatui-theme flatland-theme farmhouse-theme exotica-theme espresso-theme dracula-theme django-theme autothemer darkokai-theme darkmine-theme darkburn-theme dakrone-theme cyberpunk-theme color-theme-sanityinc-tomorrow color-theme-sanityinc-solarized clues-theme cherry-blossom-theme busybee-theme bubbleberry-theme birds-of-paradise-plus-theme badwolf-theme apropospriate-theme anti-zenburn-theme ample-zen-theme ample-theme alect-themes afternoon-theme youdao-dictionary yapfify yaml-mode ws-butler winum which-key web-mode web-beautify vue-mode volatile-highlights vmd-mode vi-tilde-fringe uuidgen use-package unfill toc-org tagedit sql-indent spaceline smeargle slim-mode scss-mode sass-mode reveal-in-osx-finder restart-emacs rainbow-delimiters pyvenv pytest pyenv-mode py-isort pug-mode popwin pip-requirements persp-mode pcre2el pbcopy paradox ox-gfm osx-trash osx-dictionary orgit org-present org-pomodoro org-mime org-download org-bullets open-junk-file nginx-mode neotree mwim move-text markdown-toc magit-gitflow magit-gh-pulls macrostep lorem-ipsum livid-mode live-py-mode linum-relative link-hint less-css-mode launchctl json-mode js2-refactor js-doc indent-guide hy-mode hungry-delete htmlize hl-todo highlight-parentheses highlight-numbers highlight-indentation helm-themes helm-swoop helm-pydoc helm-projectile helm-mode-manager helm-make helm-gitignore helm-flx helm-descbinds helm-css-scss helm-company helm-c-yasnippet helm-ag golden-ratio gnuplot github-search github-clone github-browse-file gitconfig-mode gitattributes-mode git-timemachine git-messenger git-link git-gutter-fringe git-gutter-fringe+ gist gh-md fuzzy flycheck-pos-tip flx-ido fill-column-indicator fancy-battery eyebrowse expand-region exec-path-from-shell evil-visualstar evil-visual-mark-mode evil-unimpaired evil-tutor evil-surround evil-search-highlight-persist evil-numbers evil-nerd-commenter evil-mc evil-matchit evil-magit evil-lisp-state evil-indent-plus evil-iedit-state evil-exchange evil-escape evil-ediff evil-args evil-anzu eval-sexp-fu emmet-mode elisp-slime-nav dumb-jump diminish cython-mode company-web company-tern company-statistics company-anaconda column-enforce-mode clean-aindent-mode auto-yasnippet auto-highlight-symbol auto-compile aggressive-indent adaptive-wrap ace-window ace-link ace-jump-helm-line ac-ispell))))
-(custom-set-faces
- ;; custom-set-faces was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- '(default ((((class color) (min-colors 89)) (:background "#292a44" :foreground "#f1eff8")))))
+(defun my/prettier-eslint ()
+  "Format the current buffer with prettier-eslint-cli"
+  (interactive)
+  (progn
+   (call-process
+    (executable-find "prettier-eslint")
+    nil "*Prettier-ESLint Errors*" nil
+    buffer-file-name "--write" 
+    )
+   (revert-buffer t t t)
+   )
+  )
