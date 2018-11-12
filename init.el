@@ -1,7 +1,7 @@
 ;; -*- mode: emacs-lisp -*-
 ;; This file is loaded by Spacemacs at startup.
 ;; It must be stored in your home directory.
-
+(desktop-save-mode 1)
 (defun dotspacemacs/layers ()
   "Layer configuration:
 This function should only modify configuration layer settings."
@@ -74,6 +74,7 @@ This function should only modify configuration layer settings."
      yaml
      nginx
      html
+     (json :variables json-fmt-tool 'prettier)
      (javascript :variables
                  javascript-backend 'lsp
                  javascript-fmt-tool 'prettier
@@ -206,7 +207,7 @@ It should only modify the values of Spacemacs settings."
    ;; List of themes, the first of the list is loaded when spacemacs starts.
    ;; Press `SPC T n' to cycle to the next theme in the list (works great
    ;; with 2 themes variants, one dark and one light)
-   dotspacemacs-themes '(doom-nord-day
+   dotspacemacs-themes '(doom-challenger-deep
                          spacemacs-light
                          rebecca
                          spacemacs-dark
@@ -370,7 +371,7 @@ It should only modify the values of Spacemacs settings."
    ;;                       text-mode
    ;;   :size-limit-kb 1000)
    ;; (default nil)
-   dotspacemacs-line-numbers nil
+   dotspacemacs-line-numbers 'relative
 
    ;; Code folding method. Possible values are `evil' and `origami'.
    ;; (default 'evil)
@@ -438,7 +439,7 @@ It should only modify the values of Spacemacs settings."
    ;; `trailing' to delete only the whitespace at end of lines, `changed' to
    ;; delete only whitespace for changed lines or `nil' to disable cleanup.
    ;; (default nil)
-   dotspacemacs-whitespace-cleanup nil
+   dotspacemacs-whitespace-cleanup 'trailing
 
    ;; Either nil or a number of seconds. If non-nil zone out after the specified
    ;; number of seconds. (default nil)
@@ -447,7 +448,7 @@ It should only modify the values of Spacemacs settings."
    ;; Run `spacemacs/prettify-org-buffer' when
    ;; visiting README.org files of Spacemacs.
    ;; (default nil)
-   dotspacemacs-pretty-docs nil))
+   dotspacemacs-pretty-docs t))
 
 (defun dotspacemacs/user-init ()
   ;; for develop branch
@@ -457,6 +458,8 @@ It should only modify the values of Spacemacs settings."
         '(("melpa-cn" . "http://mirrors.tuna.tsinghua.edu.cn/elpa/melpa/")
           ("org-cn"   . "http://mirrors.tuna.tsinghua.edu.cn/elpa/org/")
           ("gnu-cn"   . "http://mirrors.tuna.tsinghua.edu.cn/elpa/gnu/")))
+  ;; for emacs server
+  (setq default-frame-alist '((font . "Mononoki-14")))
   (setq python-fill-column 80)
   (setq-default git-magit-status-fullscreen t)
   (add-to-list 'exec-path "/Users/wangchen/.nvm/versions/node/v9.4.0/bin" t)
@@ -502,7 +505,7 @@ It should only modify the values of Spacemacs settings."
         '((sequence "TODO" "NEXT(n)" "WAITTING(w)" "SOMEDAY(s)"
                     "|"
                     "DONE(d@/!)" "ABORT(A@/!)")))
-  (setq-default org-capture-templates  
+  (setq-default org-capture-templates
                 '(
                   ("t" "Todo" entry (file+headline "~/Documents/Orgs/gtd.org" "Inbox")
                    "* TODO %?\n  %i\n  %a")
@@ -527,7 +530,7 @@ It should only modify the values of Spacemacs settings."
    (call-process
     (executable-find "prettier-eslint")
     nil "*Prettier-ESLint Errors*" nil
-    buffer-file-name "--write" 
+    buffer-file-name "--write"
     )
    (revert-buffer t t t)
    )
