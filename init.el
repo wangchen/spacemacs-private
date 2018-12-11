@@ -1,7 +1,6 @@
 ;; -*- mode: emacs-lisp -*-
 ;; This file is loaded by Spacemacs at startup.
 ;; It must be stored in your home directory.
-(desktop-save-mode 1)
 (defun dotspacemacs/layers ()
   "Layer configuration:
 This function should only modify configuration layer settings."
@@ -65,6 +64,7 @@ This function should only modify configuration layer settings."
                       auto-completion-enable-snippets-in-popup t
                       :disabled-for org markdown)
      syntax-checking
+     (multiple-cursors :variables multiple-cursors-backend 'evil-mc)
      ;; Languages
      (lsp :variables
           lsp-ui-flycheck-enable nil)
@@ -207,7 +207,8 @@ It should only modify the values of Spacemacs settings."
    ;; List of themes, the first of the list is loaded when spacemacs starts.
    ;; Press `SPC T n' to cycle to the next theme in the list (works great
    ;; with 2 themes variants, one dark and one light)
-   dotspacemacs-themes '(doom-challenger-deep
+   dotspacemacs-themes '(twilight-bright
+                         doom-challenger-deep
                          spacemacs-light
                          rebecca
                          spacemacs-dark
